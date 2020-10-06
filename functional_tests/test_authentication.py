@@ -16,7 +16,7 @@ class AuthenticationTest(StaticLiveServerTestCase):
     def test_can_register_for_an_account(self):
         # Jane wanted to register for an Aeternae account, so she went to the accounts registration page and saw that
         # the page title and header does suggest that this is the registration page
-        self.selenium.get(self.live_server_url + "/accounts/register/")
+        self.selenium.get(self.live_server_url + "/register/")
         self.assertIn("Register", self.selenium.title)
         header_title = self.selenium.find_element_by_tag_name("h1").text
         self.assertIn("Create Account", header_title.title())
@@ -43,11 +43,11 @@ class AuthenticationTest(StaticLiveServerTestCase):
 
         # The page redirects to the dashboard where she saw the page title and header saying so, with a nice and warm
         # message appearing to welcoming her and acknowledging that she had succesfully logged in.
-        self.assertEquals(self.selenium.current_url, self.live_server_url + "/dashboard/")
+        self.assertEquals(self.selenium.current_url + "/", self.live_server_url + "/dashboard/")
         self.assertIn("Dashboard", self.selenium.title)
         header_title = self.selenium.find_element_by_tag_name("h1").text
         self.assertIn("Dashboard", header_title.title())
         body_text = self.selenium.find_element_by_tag_name("body").text
         self.assertIn("You have successfully registered for an account. Enjoy your stay!", body_text)
 
-        # Satisfied, he went to bed.
+        # Satisfied, she went to bed.
