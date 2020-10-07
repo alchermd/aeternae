@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.auth import login as auth_login
 from django.urls import reverse
 from django.shortcuts import render, redirect
 
@@ -9,7 +10,8 @@ def register(request):
     if request.method == "POST":
         form = RegistrationForm(data=request.POST)
         if form.is_valid():
-            form.save()
+            account = form.save()
+            auth_login(request, account)
             messages.success(request, 'You have successfully registered for an account. Enjoy your stay!')
             return redirect(reverse("dashboard:home"))
     else:
