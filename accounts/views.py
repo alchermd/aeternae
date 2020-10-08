@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.contrib.auth import login as auth_login, authenticate
+from django.contrib.auth import login as auth_login, authenticate, logout as auth_logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.urls import reverse
 from django.shortcuts import render, redirect
@@ -32,3 +32,9 @@ def login(request):
         form = AuthenticationForm()
 
     return render(request, 'accounts/login.html', {"form": form})
+
+
+def logout(request):
+    auth_logout(request)
+    messages.info(request, "You have been logged out. See you soon!")
+    return redirect(reverse("accounts:login"))

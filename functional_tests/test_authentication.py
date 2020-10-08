@@ -45,7 +45,7 @@ class AuthenticationTest(StaticLiveServerTestCase):
 
         # The page redirects to the dashboard where she saw the page title and header saying so, with a nice and warm
         # message appearing to welcoming her and acknowledging that she had succesfully created an account.
-        self.assertEquals(self.selenium.current_url + "/", self.live_server_url + "/dashboard/")
+        self.assertEquals(self.selenium.current_url, self.live_server_url + "/dashboard/")
         self.assertIn("Dashboard", self.selenium.title)
         header_title = self.selenium.find_element_by_tag_name("h1").text
         self.assertIn("Dashboard", header_title.title())
@@ -78,7 +78,7 @@ class AuthenticationTest(StaticLiveServerTestCase):
 
         # The page redirects to the dashboard where she saw the page title and header saying so, with a nice and warm
         # message appearing to welcoming her and acknowledging that she had succesfully logged in.
-        self.assertEquals(self.selenium.current_url + "/", self.live_server_url + "/dashboard/")
+        self.assertEquals(self.selenium.current_url, self.live_server_url + "/dashboard/")
         self.assertIn("Dashboard", self.selenium.title)
         header_title = self.selenium.find_element_by_tag_name("h1").text
         self.assertIn("Dashboard", header_title.title())
@@ -108,7 +108,7 @@ class AuthenticationTest(StaticLiveServerTestCase):
         logout_button.click()
 
         # He is then redirected to the login page with a message stating that he has been indeed logged out of the system.
-        self.assertEquals(self.selenium.current_url + "/", self.live_server_url + "/login/")
+        self.assertEquals(self.selenium.current_url, self.live_server_url + "/login/")
         self.assertIn("Login", self.selenium.title)
         header_title = self.selenium.find_element_by_tag_name("h1").text
         self.assertIn("Login", header_title.title())

@@ -28,7 +28,7 @@ class RegistrationPageTest(TestCase):
         self.assertRedirects(response, reverse("dashboard:home"))
 
 
-class LoginPageTest(TestCase):
+class AuthenticationTest(TestCase):
     def test_the_registration_page_uses_expected_template(self):
         response = self.client.get(reverse("accounts:login"))
         self.assertTemplateUsed(response, "accounts/login.html")
@@ -44,5 +44,18 @@ class LoginPageTest(TestCase):
         }
         response = self.client.post(reverse("accounts:login"), data=credentials, follow=True)
 
-        self.assertEquals(response.context["user"], account)
+        self.assertTrue(response.context["user"].is_authenticated)
         self.assertRedirects(response, reverse("dashboard:home"))
+
+    def test_account_can_be_logged_out(self):
+        account = Account(first_name="John", last_name="Doe", email="jdoe@example.com")
+        account.set_password("p4ssw0rd!")
+        account.save()
+
+        login_success = self.client.login(username=account.email, password="p4ssw0rd!")
+        self.assertTrue(login_success)
+
+        response = self.client.get(reverse("accounts:logout"), follow=True)
+
+        self.assertFalse(response.context["user"].is_authenticated)
+        self.assertRedirects(response, reverse("accounts:login"))
