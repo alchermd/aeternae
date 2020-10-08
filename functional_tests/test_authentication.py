@@ -84,3 +84,35 @@ class AuthenticationTest(StaticLiveServerTestCase):
         self.assertIn("Dashboard", header_title.title())
         body_text = self.selenium.find_element_by_tag_name("body").text
         self.assertIn("It's great to have you back, Alice!", body_text)
+
+        # Satisfied, she went to bed.
+
+    def test_can_logout_when_logged_in(self):
+        # Bob logs in to his account and after a while, decided that he's done for the day .
+        account = Account(first_name="Bob", last_name="Smith", email="bob.smith@example.com")
+        account.set_password("p4ssw0rd!")
+        account.save()
+
+        self.client.login(username=account.email, password="p4ssw0rd!")
+        self.selenium.get(self.live_server_url + "/dashboard/")
+        self.assertIn("Dashboard", self.selenium.title)
+        header_title = self.selenium.find_element_by_tag_name("h1").text
+        self.assertIn("Dashboard", header_title.title())
+
+        # He clicks the user dropdown to show the logout button
+        user_dropdown = self.selenium.find_element_by_id("user-dropdown")
+        user_dropdown.click()
+
+        # And then clicks the logout button itself
+        logout_button = self.selenium.find_element_by_link_text("Logout")
+        logout_button.click()
+
+        # He is then redirected to the login page with a message stating that he has been indeed logged out of the system.
+        self.assertEquals(self.selenium.current_url + "/", self.live_server_url + "/login/")
+        self.assertIn("Login", self.selenium.title)
+        header_title = self.selenium.find_element_by_tag_name("h1").text
+        self.assertIn("Login", header_title.title())
+        body_text = self.selenium.find_element_by_tag_name("body").text
+        self.assertIn("You have been logged out. See you soon!", body_text)
+
+        # Satisfied, he went to bed.
