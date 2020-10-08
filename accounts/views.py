@@ -1,5 +1,6 @@
 from django.contrib import messages
-from django.contrib.auth import login as auth_login
+from django.contrib.auth import login as auth_login, authenticate
+from django.contrib.auth.forms import AuthenticationForm
 from django.urls import reverse
 from django.shortcuts import render, redirect
 
@@ -17,3 +18,17 @@ def register(request):
     else:
         form = RegistrationForm()
     return render(request, 'accounts/register.html', {"form": form})
+
+
+def login(request):
+    if request.method == "POST":
+        form = AuthenticationForm(data={"username": request.POST["email"], "password": request.POST["password"]})
+        if form.is_valid():
+            account = authenticate(request, username=request.POST["email"], password=request.POST["password"])
+            auth_login(request, account)
+            messages.success(request, f"It's great to have you back, {account.first_name.title()}!")
+            return redirect(reverse("dashboard:home"))
+    else:
+        form = AuthenticationForm()
+
+    return render(request, 'accounts/login.html', {"form": form})

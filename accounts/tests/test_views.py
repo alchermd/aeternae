@@ -17,11 +17,32 @@ class RegistrationPageTest(TestCase):
             "password1": "p4ssw0rd!",
             "password2": "p4ssw0rd!",
         }
-        response = self.client.post(reverse("accounts:register"), data=data)
+        response = self.client.post(reverse("accounts:register"), data=data, follow=True)
         created_account = Account.objects.first()
 
         self.assertEquals(data["first_name"], created_account.first_name)
         self.assertEquals(data["last_name"], created_account.last_name)
         self.assertEquals(data["email"], created_account.email)
 
+        self.assertEquals(response.context["user"], created_account)
+        self.assertRedirects(response, reverse("dashboard:home"))
+
+
+class LoginPageTest(TestCase):
+    def test_the_registration_page_uses_expected_template(self):
+        response = self.client.get(reverse("accounts:login"))
+        self.assertTemplateUsed(response, "accounts/login.html")
+
+    def test_can_login_an_existing_account(self):
+        account = Account(first_name="John", last_name="Doe", email="jdoe@example.com")
+        account.set_password("p4ssw0rd!")
+        account.save()
+
+        credentials = {
+            "email": account.email,
+            "password": "p4ssw0rd!",
+        }
+        response = self.client.post(reverse("accounts:login"), data=credentials, follow=True)
+
+        self.assertEquals(response.context["user"], account)
         self.assertRedirects(response, reverse("dashboard:home"))

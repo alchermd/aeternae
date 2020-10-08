@@ -64,7 +64,7 @@ class AuthenticationTest(StaticLiveServerTestCase):
         self.selenium.get(self.live_server_url + "/login/")
         self.assertIn("Login", self.selenium.title)
         header_title = self.selenium.find_element_by_tag_name("h1").text
-        self.assertIn("Logins", header_title.title())
+        self.assertIn("Login", header_title.title())
 
         # ...and fills out the form with her credentials
         email_inputbox = self.selenium.find_element_by_name("email")
