@@ -39,7 +39,7 @@ class LoginPageTest(TestCase):
         account.save()
 
         credentials = {
-            "email": account.email,
+            "username": account.email,
             "password": "p4ssw0rd!",
         }
         response = self.client.post(reverse("accounts:login"), data=credentials, follow=True)

@@ -22,9 +22,9 @@ def register(request):
 
 def login(request):
     if request.method == "POST":
-        form = AuthenticationForm(data={"username": request.POST["email"], "password": request.POST["password"]})
+        form = AuthenticationForm(data=request.POST)
         if form.is_valid():
-            account = authenticate(request, username=request.POST["email"], password=request.POST["password"])
+            account = authenticate(request, username=request.POST["username"], password=request.POST["password"])
             auth_login(request, account)
             messages.success(request, f"It's great to have you back, {account.first_name.title()}!")
             return redirect(reverse("dashboard:home"))

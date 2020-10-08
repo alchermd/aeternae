@@ -67,9 +67,9 @@ class AuthenticationTest(StaticLiveServerTestCase):
         self.assertIn("Login", header_title.title())
 
         # ...and fills out the form with her credentials
-        email_inputbox = self.selenium.find_element_by_name("email")
+        email_inputbox = self.selenium.find_element_by_id("email")
         email_inputbox.send_keys("alice.green@example.com")
-        password_inputbox = self.selenium.find_element_by_name("password")
+        password_inputbox = self.selenium.find_element_by_id("password")
         password_inputbox.send_keys("p4ssw0rd!")
 
         # She then submits the login form
