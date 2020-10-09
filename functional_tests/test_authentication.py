@@ -183,3 +183,27 @@ class AuthenticationTest(StaticLiveServerTestCase):
         self.assertIn("You have been logged out. See you soon!", body_text)
 
         # Satisfied, she went to bed.
+
+    def test_logged_in_users_cannot_access_the_registration_page(self):
+        # Marshall was checking something in the Aeternae dashboard, and had just went out for lunch.
+        account = Account(first_name="Marshall", last_name="Anthony", email="marshall.anthony@example.com")
+        account.set_password("p4ssw0rd!")
+        account.save()
+        self.login(username=account.email, password="p4ssw0rd!")
+
+        # Coming back to his desk, he thought of an idea that requires a new account.
+        # He goes to the registration page to create one for himself.
+        self.selenium.get(self.live_server_url + "/register/")
+
+        # He's surprised that his browser redirects to the dashboard.
+        self.assertEquals(self.selenium.current_url, self.live_server_url + "/dashboard/")
+
+        # "Oh, right! I'm already logged in!", he realized. He postponed his idea for tomorrow.
+        # After a while, he finished his work and logged out.
+        self.logout()
+
+        # He's sent off by a message confirming she is indeed logged out of the system.
+        body_text = self.selenium.find_element_by_tag_name("body").text
+        self.assertIn("You have been logged out. See you soon!", body_text)
+
+        # Satisfied, she went to bed.
