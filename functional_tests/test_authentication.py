@@ -5,6 +5,8 @@ from accounts.models import Account
 
 
 class AuthenticationTest(StaticLiveServerTestCase):
+    DEFAULT_PASSWORD = "p4ssw0rd!"
+
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -16,6 +18,9 @@ class AuthenticationTest(StaticLiveServerTestCase):
         super().tearDownClass()
 
     def login(self, username, password):
+        """
+        Goes to the login page and enters the given credentials.
+        """
         self.selenium.get(self.live_server_url + "/login/")
 
         email_inputbox = self.selenium.find_element_by_id("email")
@@ -27,11 +32,24 @@ class AuthenticationTest(StaticLiveServerTestCase):
         submit_button.click()
 
     def logout(self):
+        """
+        Executes the steps to log the user out of the system.
+        """
         user_dropdown = self.selenium.find_element_by_id("user-dropdown")
         user_dropdown.click()
 
         logout_button = self.selenium.find_element_by_link_text("Logout")
         logout_button.click()
+
+    def make_account(self, email, password=DEFAULT_PASSWORD, first_name="", last_name=""):
+        """
+        Creates a new Account instance with the given parameters
+        """
+        account = Account(email=email, first_name=first_name, last_name=last_name)
+        account.set_password(password)
+        account.save()
+
+        return account
 
     def test_can_register_for_an_account(self):
         # Jane wanted to register for an Aeternae account, so she went to the accounts registration page and saw that
@@ -53,9 +71,9 @@ class AuthenticationTest(StaticLiveServerTestCase):
 
         # Lastly is her password, inputted twice for confirmation
         password1_inputbox = self.selenium.find_element_by_name("password1")
-        password1_inputbox.send_keys("p4ssw0rd!")
+        password1_inputbox.send_keys(self.DEFAULT_PASSWORD)
         password2_inputbox = self.selenium.find_element_by_name("password2")
-        password2_inputbox.send_keys("p4ssw0rd!")
+        password2_inputbox.send_keys(self.DEFAULT_PASSWORD)
 
         # She then submitted the registration form
         submit_button = self.selenium.find_element_by_css_selector("input[type=submit]")
@@ -74,9 +92,7 @@ class AuthenticationTest(StaticLiveServerTestCase):
 
     def test_can_login_with_an_account(self):
         # Alice had registered for an account yesterday and would like to log back in to the dashboard
-        account = Account(first_name="Alice", last_name="Green", email="alice.green@example.com")
-        account.set_password("p4ssw0rd!")
-        account.save()
+        account = self.make_account(email="alice.green@example.com", first_name="Alice", last_name="Green")
 
         # She goes to the login page...
         self.selenium.get(self.live_server_url + "/login/")
@@ -86,9 +102,9 @@ class AuthenticationTest(StaticLiveServerTestCase):
 
         # ...and fills out the form with her credentials
         email_inputbox = self.selenium.find_element_by_id("email")
-        email_inputbox.send_keys("alice.green@example.com")
+        email_inputbox.send_keys(account.email)
         password_inputbox = self.selenium.find_element_by_id("password")
-        password_inputbox.send_keys("p4ssw0rd!")
+        password_inputbox.send_keys(self.DEFAULT_PASSWORD)
 
         # She then submits the login form
         submit_button = self.selenium.find_element_by_css_selector("input[type=submit]")
@@ -107,11 +123,9 @@ class AuthenticationTest(StaticLiveServerTestCase):
 
     def test_can_logout_when_logged_in(self):
         # Bob logs in to his account and after a while, decided that he's done for the day .
-        account = Account(first_name="Bob", last_name="Smith", email="bob.smith@example.com")
-        account.set_password("p4ssw0rd!")
-        account.save()
+        account = self.make_account(email="bob.smith@example.com", first_name="Bob", last_name="Smith")
 
-        self.login(account.email, "p4ssw0rd!")
+        self.login(account.email, self.DEFAULT_PASSWORD)
         self.selenium.get(self.live_server_url + "/dashboard/")
         self.assertIn("Dashboard", self.selenium.title)
         header_title = self.selenium.find_element_by_tag_name("h1").text
@@ -137,9 +151,7 @@ class AuthenticationTest(StaticLiveServerTestCase):
 
     def test_cannot_access_the_dashboard_when_not_logged_in(self):
         # Shawn had a long day and would like to check up what's new in the Aeternae dashboard.
-        account = Account(first_name="Shawn", last_name="Smith", email="shawn.smith@example.com")
-        account.set_password("p4ssw0rd!")
-        account.save()
+        account = self.make_account(email="shawn.smith@example.com", first_name="Shawn", last_name="Smith")
 
         # He remembered the URL and goes to the dashboard page.
         self.selenium.get(self.live_server_url + "/dashboard/")
@@ -150,9 +162,9 @@ class AuthenticationTest(StaticLiveServerTestCase):
         # "Ooops!", he uttered, as he remembers that he forgot to login to his account.
         # He typed in his credentials and hit the login button.
         email_inputbox = self.selenium.find_element_by_id("email")
-        email_inputbox.send_keys("shawn.smith@example.com")
+        email_inputbox.send_keys(account.email)
         password_inputbox = self.selenium.find_element_by_id("password")
-        password_inputbox.send_keys("p4ssw0rd!")
+        password_inputbox.send_keys(self.DEFAULT_PASSWORD)
         submit_button = self.selenium.find_element_by_css_selector("input[type=submit]")
         submit_button.click()
 
@@ -164,10 +176,8 @@ class AuthenticationTest(StaticLiveServerTestCase):
 
     def test_logged_in_users_cannot_access_the_login_page(self):
         # Lorraine had been working inside the Aeternae dashboard for a while now.
-        account = Account(first_name="Lorraine", last_name="Jones", email="lorraine.jones@example.com")
-        account.set_password("p4ssw0rd!")
-        account.save()
-        self.login(username=account.email, password="p4ssw0rd!")
+        account = self.make_account(email="lorraine.jones@example.com", first_name="Lorraine", last_name="Jones")
+        self.login(username=account.email, password=self.DEFAULT_PASSWORD)
 
         # After a few hours away from the computer, she went on and try to log in to her account.
         self.selenium.get(self.live_server_url + "/login/")
@@ -186,10 +196,8 @@ class AuthenticationTest(StaticLiveServerTestCase):
 
     def test_logged_in_users_cannot_access_the_registration_page(self):
         # Marshall was checking something in the Aeternae dashboard, and had just went out for lunch.
-        account = Account(first_name="Marshall", last_name="Anthony", email="marshall.anthony@example.com")
-        account.set_password("p4ssw0rd!")
-        account.save()
-        self.login(username=account.email, password="p4ssw0rd!")
+        account = self.make_account(email="marshall.anthony@example.com", first_name="Marshall", last_name="Anthony")
+        self.login(username=account.email, password=self.DEFAULT_PASSWORD)
 
         # Coming back to his desk, he thought of an idea that requires a new account.
         # He goes to the registration page to create one for himself.
