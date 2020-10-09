@@ -116,3 +116,31 @@ class AuthenticationTest(StaticLiveServerTestCase):
         self.assertIn("You have been logged out. See you soon!", body_text)
 
         # Satisfied, he went to bed.
+
+    def test_cannot_access_the_dashboard_when_not_logged_in(self):
+        # Shawn had a long day and would like to check up what's new in the Aeternae dashboard.
+        account = Account(first_name="Shawn", last_name="Smith", email="shawn.smith@example.com")
+        account.set_password("p4ssw0rd!")
+        account.save()
+
+        # He remembered the URL and goes to the dashboard page.
+        self.selenium.get(self.live_server_url + "/dashboard/")
+
+        # Weirdly enough, he was redirected to the login page.
+        self.assertEquals(self.selenium.current_url, self.live_server_url + "/login/")
+
+        # "Ooops!", he uttered, as he remembers that he forgot to login to his account.
+        # He typed in his credentials and hit the login button.
+        email_inputbox = self.selenium.find_element_by_id("email")
+        email_inputbox.send_keys("shawn.smith@example.com")
+        password_inputbox = self.selenium.find_element_by_id("password")
+        password_inputbox.send_keys("p4ssw0rd!")
+        submit_button = self.selenium.find_element_by_css_selector("input[type=submit]")
+        submit_button.click()
+
+        # The page now redirects to the dashboard home, and he was greeted by the familiar friendly message.
+        self.selenium.get(self.live_server_url + "/dashboard/")
+        body_text = self.selenium.find_element_by_tag_name("body").text
+        self.assertIn("It's great to have you back, Shawn!", body_text)
+
+        # Satisfied, he went to bed.
