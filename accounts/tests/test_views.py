@@ -29,6 +29,14 @@ class RegistrationPageTest(TestCase):
 
 
 class AuthenticationTest(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+
+        cls.account = Account(email="test@example.com")
+        cls.account.set_password("p4ssw0rd!")
+        cls.account.save()
+
     def test_the_registration_page_uses_expected_template(self):
         response = self.client.get(reverse("accounts:login"))
         self.assertTemplateUsed(response, "accounts/login.html")
@@ -59,3 +67,8 @@ class AuthenticationTest(TestCase):
 
         self.assertFalse(response.context["user"].is_authenticated)
         self.assertRedirects(response, reverse("accounts:login"))
+
+    def test_login_page_cannot_be_accessed_if_already_logged_in(self):
+        self.client.login(username=self.account.email, password="p4ssw0rd!")
+        response = self.client.get(reverse("accounts:login"))
+        self.assertRedirects(response, reverse("dashboard:home"))

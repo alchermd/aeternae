@@ -1,9 +1,9 @@
 from django.contrib import messages
 from django.contrib.auth import login as auth_login, authenticate, logout as auth_logout
+from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.forms import AuthenticationForm
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.shortcuts import render, redirect
-
 from accounts.forms import RegistrationForm
 
 
@@ -20,6 +20,7 @@ def register(request):
     return render(request, 'accounts/register.html', {"form": form})
 
 
+@user_passes_test(lambda u: u.is_anonymous, login_url=reverse_lazy("dashboard:home"), redirect_field_name=None)
 def login(request):
     if request.method == "POST":
         form = AuthenticationForm(data=request.POST)
