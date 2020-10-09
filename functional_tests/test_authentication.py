@@ -26,6 +26,13 @@ class AuthenticationTest(StaticLiveServerTestCase):
         submit_button = self.selenium.find_element_by_css_selector("input[type=submit]")
         submit_button.click()
 
+    def logout(self):
+        user_dropdown = self.selenium.find_element_by_id("user-dropdown")
+        user_dropdown.click()
+
+        logout_button = self.selenium.find_element_by_link_text("Logout")
+        logout_button.click()
+
     def test_can_register_for_an_account(self):
         # Jane wanted to register for an Aeternae account, so she went to the accounts registration page and saw that
         # the page title and header does suggest that this is the registration page
@@ -154,3 +161,25 @@ class AuthenticationTest(StaticLiveServerTestCase):
         self.assertIn("It's great to have you back, Shawn!", body_text)
 
         # Satisfied, he went to bed.
+
+    def test_logged_in_users_cannot_access_the_login_page(self):
+        # Lorraine had been working inside the Aeternae dashboard for a while now.
+        account = Account(first_name="Lorraine", last_name="Jones", email="lorraine.jones@example.com")
+        account.set_password("p4ssw0rd!")
+        account.save()
+        self.login(username=account.email, password="p4ssw0rd!")
+
+        # After a few hours away from the computer, she went on and try to log in to her account.
+        self.selenium.get(self.live_server_url + "/login/")
+
+        # "Huh, that's weird", she thought as the page is redirected to the dashboard.
+        self.assertEquals(self.selenium.current_url, self.live_server_url + "/dashboard/")
+
+        # "Oh, right! I'm already logged in!", she realized. After a while, she finished her work and logged out.
+        self.logout()
+
+        # She's sent off by a message confirming she is indeed logged out of the system.
+        body_text = self.selenium.find_element_by_tag_name("body").text
+        self.assertIn("You have been logged out. See you soon!", body_text)
+
+        # Satisfied, she went to bed.
