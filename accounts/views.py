@@ -7,6 +7,7 @@ from django.shortcuts import render, redirect
 from accounts.forms import RegistrationForm
 
 
+@user_passes_test(lambda u: u.is_anonymous, login_url=reverse_lazy("dashboard:home"), redirect_field_name=None)
 def register(request):
     if request.method == "POST":
         form = RegistrationForm(data=request.POST)

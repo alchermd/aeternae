@@ -4,7 +4,15 @@ from django.test import TestCase
 from accounts.models import Account
 
 
-class RegistrationPageTest(TestCase):
+class RegistrationTest(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+
+        cls.account = Account(email="test@example.com")
+        cls.account.set_password("p4ssw0rd!")
+        cls.account.save()
+
     def test_the_registration_page_uses_expected_template(self):
         response = self.client.get(reverse("accounts:register"))
         self.assertTemplateUsed(response, "accounts/register.html")
@@ -18,13 +26,18 @@ class RegistrationPageTest(TestCase):
             "password2": "p4ssw0rd!",
         }
         response = self.client.post(reverse("accounts:register"), data=data, follow=True)
-        created_account = Account.objects.first()
+        created_account = Account.objects.get(email=data["email"])
 
         self.assertEquals(data["first_name"], created_account.first_name)
         self.assertEquals(data["last_name"], created_account.last_name)
         self.assertEquals(data["email"], created_account.email)
 
         self.assertEquals(response.context["user"], created_account)
+        self.assertRedirects(response, reverse("dashboard:home"))
+
+    def test_registration_page_cannot_be_accessed_if_already_logged_in(self):
+        self.client.login(username=self.account.email, password="p4ssw0rd!")
+        response = self.client.get(reverse("accounts:register"))
         self.assertRedirects(response, reverse("dashboard:home"))
 
 
