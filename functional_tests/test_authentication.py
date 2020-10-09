@@ -15,6 +15,17 @@ class AuthenticationTest(StaticLiveServerTestCase):
         cls.selenium.quit()
         super().tearDownClass()
 
+    def login(self, username, password):
+        self.selenium.get(self.live_server_url + "/login/")
+
+        email_inputbox = self.selenium.find_element_by_id("email")
+        email_inputbox.send_keys(username)
+        password_inputbox = self.selenium.find_element_by_id("password")
+        password_inputbox.send_keys(password)
+
+        submit_button = self.selenium.find_element_by_css_selector("input[type=submit]")
+        submit_button.click()
+
     def test_can_register_for_an_account(self):
         # Jane wanted to register for an Aeternae account, so she went to the accounts registration page and saw that
         # the page title and header does suggest that this is the registration page
@@ -93,7 +104,7 @@ class AuthenticationTest(StaticLiveServerTestCase):
         account.set_password("p4ssw0rd!")
         account.save()
 
-        self.client.login(username=account.email, password="p4ssw0rd!")
+        self.login(account.email, "p4ssw0rd!")
         self.selenium.get(self.live_server_url + "/dashboard/")
         self.assertIn("Dashboard", self.selenium.title)
         header_title = self.selenium.find_element_by_tag_name("h1").text
@@ -127,7 +138,7 @@ class AuthenticationTest(StaticLiveServerTestCase):
         self.selenium.get(self.live_server_url + "/dashboard/")
 
         # Weirdly enough, he was redirected to the login page.
-        self.assertEquals(self.selenium.current_url, self.live_server_url + "/login/")
+        self.assertEquals(self.selenium.current_url, self.live_server_url + "/login/?next=/dashboard/")
 
         # "Ooops!", he uttered, as he remembers that he forgot to login to his account.
         # He typed in his credentials and hit the login button.
@@ -139,7 +150,6 @@ class AuthenticationTest(StaticLiveServerTestCase):
         submit_button.click()
 
         # The page now redirects to the dashboard home, and he was greeted by the familiar friendly message.
-        self.selenium.get(self.live_server_url + "/dashboard/")
         body_text = self.selenium.find_element_by_tag_name("body").text
         self.assertIn("It's great to have you back, Shawn!", body_text)
 

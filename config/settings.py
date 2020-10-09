@@ -118,3 +118,6 @@ STATIC_URL = "/static/"
 
 # Custom User model
 AUTH_USER_MODEL = 'accounts.Account'
+
+# Custon login URL
+LOGIN_URL = '/login/'
