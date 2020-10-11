@@ -6,7 +6,8 @@
 <div class="col-lg-7"> 
     <div class="card shadow-lg border-0 rounded-lg mt-5">
         <div class="card-header">
-            <h1 class="text-center font-weight-light my-4">Create Account</h1>
+            <a href="{% url 'pages:home' %}"><span class="fa fa-arrow-left"></span> Home</a>
+            <h1 class="text-center font-weight-light my-4 text-primary">Create Account</h1>
         </div>
         <div class="card-body">
             <form method="POST" action="{% url 'accounts:register' %}">
