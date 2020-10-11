@@ -5,10 +5,10 @@ Django Starter Project featuring the Creative Landing Page and SB Admin
 ## Features
 
 - [x] Landing Page
-- [ ] Authentication System
+- [x] Authentication System
     - [x] Account Login
     - [x] Account Registration
-    - [ ] Password Reset
+    - [x] Password Reset
 - [x] Dashboard
     - [x] Auth-protected
     - [x] Charts

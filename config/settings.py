@@ -121,3 +121,7 @@ AUTH_USER_MODEL = 'accounts.Account'
 
 # Custon login URL
 LOGIN_URL = '/login/'
+
+if DEBUG:
+    EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+    EMAIL_FILE_PATH = str(BASE_DIR.joinpath('sent_emails'))
