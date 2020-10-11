@@ -1,3 +1,6 @@
+import json
+import os
+
 from django.urls import reverse
 from django.test import TestCase
 
@@ -25,3 +28,12 @@ class DashboardTest(TestCase):
         self.client.login(username=self.account.email, password="p4ssw0rd!")
         response = self.client.get(reverse("dashboard:home"))
         self.assertEquals(200, response.status_code)
+
+    def test_can_fetch_sample_sessions_data(self):
+        self.client.login(username=self.account.email, password="p4ssw0rd!")
+        response = self.client.get(reverse("dashboard:sessions"))
+
+        pwd = os.path.dirname(__file__)
+        filepath = os.path.join(pwd, "../data.json")
+        with open(filepath, "r") as f:
+            self.assertEquals(json.load(f)["sessions"], json.loads(response.content.decode("utf-8")))
