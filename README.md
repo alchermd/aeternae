@@ -2,6 +2,22 @@
 
 Django Starter Project featuring the Creative Landing Page and SB Admin
 
+## Features
+
+- [x] Landing Page
+- [ ] Authentication System
+    - [x] Account Login
+    - [x] Account Registration
+    - [ ] Password Reset
+- [ ] Dashboard
+    - [x] Auth-protected
+    - [ ] Charts
+    - [ ] Data Tables
+- [ ] Miscellaneous
+    - [x] Selenium Functional Tests
+    - [x] Unit Tests
+    - [ ] Documentation
+
 ## System Requirements
 
 - Python v3.8
