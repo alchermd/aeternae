@@ -25,3 +25,11 @@ def revenue(request):
     filepath = os.path.join(pwd, "data.json")
     with open(filepath, "r") as f:
         return JsonResponse(json.load(f)["revenue"])
+
+
+@login_required
+def employees(request):
+    pwd = os.path.dirname(__file__)
+    filepath = os.path.join(pwd, "data.json")
+    with open(filepath, "r") as f:
+        return JsonResponse(json.load(f)["employees"])

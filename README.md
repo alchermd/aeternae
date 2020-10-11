@@ -9,12 +9,12 @@ Django Starter Project featuring the Creative Landing Page and SB Admin
     - [x] Account Login
     - [x] Account Registration
     - [ ] Password Reset
-- [ ] Dashboard
+- [x] Dashboard
     - [x] Auth-protected
     - [x] Charts
         - [x] Area Chart
         - [x] Bar Chart
-    - [ ] Data Tables
+    - [x] Data Tables
 - [ ] Miscellaneous
     - [x] Selenium Functional Tests
     - [x] Unit Tests
