@@ -28,6 +28,10 @@ def login(request):
         if form.is_valid():
             account = authenticate(request, username=request.POST["username"], password=request.POST["password"])
             auth_login(request, account)
+
+            if not request.POST.get('remember_me', None):
+                request.session.set_expiry(0)
+
             messages.success(request, f"It's great to have you back, {account.first_name.title()}!")
             return redirect(reverse("dashboard:home"))
     else:
