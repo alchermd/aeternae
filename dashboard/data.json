@@ -30,5 +30,23 @@
       "Mar 12",
       "Mar 13"
     ]
+  },
+  "revenue": {
+    "labels": [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June"
+    ],
+    "data": [
+      4215,
+      5312,
+      6251,
+      7841,
+      9821,
+      14984
+    ]
   }
 }

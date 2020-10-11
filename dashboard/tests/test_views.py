@@ -37,3 +37,12 @@ class DashboardTest(TestCase):
         filepath = os.path.join(pwd, "../data.json")
         with open(filepath, "r") as f:
             self.assertEquals(json.load(f)["sessions"], json.loads(response.content.decode("utf-8")))
+
+    def test_can_fetch_sample_revenue_data(self):
+        self.client.login(username=self.account.email, password="p4ssw0rd!")
+        response = self.client.get(reverse("dashboard:revenue"))
+
+        pwd = os.path.dirname(__file__)
+        filepath = os.path.join(pwd, "../data.json")
+        with open(filepath, "r") as f:
+            self.assertEquals(json.load(f)["revenue"], json.loads(response.content.decode("utf-8")))

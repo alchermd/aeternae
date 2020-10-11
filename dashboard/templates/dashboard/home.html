@@ -1,4 +1,5 @@
 {% extends "dashboard/base.html" %}
+{% load static %}
 
 {% block title %}Dashboard Home{% endblock %}
 
@@ -10,4 +11,10 @@
     {% include "dashboard/examples/cards.html" %}
     {% include "dashboard/examples/charts.html" %}
     {% include "dashboard/examples/data-table.html" %}
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    <script src="{% static "dashboard/js/chart-area.js" %}"></script>
+    <script src="{% static "dashboard/js/chart-bar.js" %}"></script>
 {% endblock %}

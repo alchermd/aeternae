@@ -17,3 +17,11 @@ def sessions(request):
     filepath = os.path.join(pwd, "data.json")
     with open(filepath, "r") as f:
         return JsonResponse(json.load(f)["sessions"])
+
+
+@login_required
+def revenue(request):
+    pwd = os.path.dirname(__file__)
+    filepath = os.path.join(pwd, "data.json")
+    with open(filepath, "r") as f:
+        return JsonResponse(json.load(f)["revenue"])
